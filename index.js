@@ -4,6 +4,8 @@ const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 const prefix = "~";
 
+totalRolled = 0;
+
 bot.login(TOKEN);
 
 bot.on('ready', () => {
@@ -15,7 +17,8 @@ bot.on('message', (message) => {
 
     if (message.content.includes(`${prefix}roll`)) {
         let result = roll(message.content);
-        message.channel.send(`${message.author.username}, you rolled: ${result}`);
+        message.channel.send(`${message.author.username}, you rolled: ${totalRolled}`);
+        message.channel.send(`${result}`);
     }
 });
 
@@ -33,24 +36,30 @@ function roll(input) {
 
     switch (arg) {
         case '1d6':
-            return `${getNumber(6)}`;
+            totalRolled = getNumber(6);
+            return `${getDiceEmoji(totalRolled)}`;
         case 'd6':
-            return `${getNumber(6)}`;
+            totalRolled = getNumber(6);
+            return `${getDiceEmoji(totalRolled)}`;
         case '2d6':
             d1 = getNumber(6);
             d2 = getNumber(6);
-            return `${d1}, ${d2}. Total: ${d1 + d2}`
+            totalRolled = d1 + d2;
+            return `${getDiceEmoji(d1)} ${getDiceEmoji(d2)}`          
         case 'd66':
             d1 = getNumber(6);
             d2 = getNumber(6);
-            return `${d1}, ${d2}. Total: ${(d1 * 10) + d2}`
+            totalRolled = (d1 * 10) + d2;
+            return `${getDiceEmoji(d1)} ${getDiceEmoji(d2)}`
         case 'd666':
             d1 = getNumber(6);
             d2 = getNumber(6);
             d3 = getNumber(6);
-            return `${d1}, ${d2}, ${d3}. Total: ${(d1 * 100) + (d2 * 10) + d3}`
+            totalRolled = (d1 * 100) + (d2 * 10) + d3;
+            return `${getDiceEmoji(d1)} ${getDiceEmoji(d2)} ${getDiceEmoji(d3)}`
         case 'd3':
-            return `${getNumber(3)}`;
+            totalRolled = getNumber(3);
+            return `${getDiceEmoji(totalRolled)}`;
         default:
             return 'dice setting not found.'
     }
@@ -58,4 +67,8 @@ function roll(input) {
 
 function getNumber(max) {
     return 1 + Math.floor(Math.random() * max);
+}
+
+function getDiceEmoji(face){
+    return bot.emojis.cache.find(e => e.name === `Dice_${face}`).toString();
 }
