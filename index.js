@@ -1,8 +1,11 @@
 require('dotenv').config();
 const Discord = require('discord.js');
+const express = require('express');
+
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 const prefix = "~";
+const app = express();
 
 totalRolled = 0;
 
@@ -72,3 +75,8 @@ function getNumber(max) {
 function getDiceEmoji(face){
     return bot.emojis.cache.find(e => e.name === `Dice_${face}`).toString();
 }
+
+app.set('port', 5000);
+app.listen(app.get('port'), () => {{
+    console.log(`Node Application listening on port ${app.get('port')}`);
+}});
