@@ -76,7 +76,7 @@ function getDiceEmoji(face){
     return bot.emojis.cache.find(e => e.name === `Dice_${face}`).toString();
 }
 
-app.set('port', 5000);
+app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'), () => {{
     console.log(`Node Application listening on port ${app.get('port')}`);
 }});
