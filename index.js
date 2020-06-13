@@ -28,49 +28,49 @@ bot.on('message', (message) => {
         message.channel.send(`${result}`);
     }
 
-    else if(message.content.includes(`${prefix}addplayer`) && isRole(message, "Maid")){
+    else if (message.content.includes(`${prefix}addplayer`) && isRole(message, "Maid")) {
         let arg = isolateArgument(message.content);
         addPlayer(arg);
         message.channel.send(`Added Player: ${arg}`);
     }
 
-    else if(message.content.includes(`${prefix}playerlist`) && isRole(message, "Maid")){
+    else if (message.content.includes(`${prefix}playerlist`) && isRole(message, "Maid")) {
         message.channel.send(`The current players are: \n${playerList()}`);
     }
 
-    else if(message.content.includes(`${prefix}resetplayers`) && isRole(message, "Maid")){
+    else if (message.content.includes(`${prefix}resetplayers`) && isRole(message, "Maid")) {
         players = new Array();
         message.channel.send('Reset the Player List');
     }
 
-    else if(message.content.includes(`${prefix}setenemies`) && isRole(message, "Maid")){
+    else if (message.content.includes(`${prefix}setenemies`) && isRole(message, "Maid")) {
         let arg = isolateArgument(message.content);
         enemyTotal = arg;
         message.channel.send(`Enemy tokens set to: ${arg}`);
     }
 
-    else if(message.content.includes(`${prefix}startround`) && isRole(message, "Maid")){
+    else if (message.content.includes(`${prefix}startround`) && isRole(message, "Maid")) {
         newRound();
         message.channel.send(`Created new Initiative Stack with:\n${playerList()} ${enemyTotal} Enemy Token(s)`);
     }
 
-    else if(message.content.includes(`${prefix}nextturn`) && isRole(message, "Maid")){
+    else if (message.content.includes(`${prefix}nextturn`) && isRole(message, "Maid")) {
         nextTurn();
         if (currentTurn === 'End of Round') message.channel.send(`**End of Round!**`);
         else message.channel.send(`The current initiative goes to: \n${currentTurn}`);
     }
 
-    else if(message.content.includes(`${prefix}delay`) && isRole(message, "Maid")){
+    else if (message.content.includes(`${prefix}delay`) && isRole(message, "Maid")) {
         delayTurn();
         message.channel.send(`Okay! ${currentTurn}'s turn has been delayed`);
-    }  
+    }
 });
 
-function delayTurn(){
+function delayTurn() {
     stack.push(currentTurn);
 }
 
-function nextTurn(){
+function nextTurn() {
     let index = Math.floor(Math.random() * stack.length);
 
     currentTurn = stack[index];
@@ -78,7 +78,7 @@ function nextTurn(){
     stack.splice(index, 1);
 }
 
-function newRound(){
+function newRound() {
     stack = new Array();
 
     players.forEach(player => {
@@ -93,7 +93,7 @@ function newRound(){
     stack.push('End of Round');
 }
 
-function playerList(){
+function playerList() {
     let output = "";
     players.forEach(player => {
         output += `${player}\n`;
@@ -101,11 +101,11 @@ function playerList(){
     return output;
 }
 
-function addPlayer(arg){
+function addPlayer(arg) {
     players.push(arg);
 }
 
-function isRole(msg, role){
+function isRole(msg, role) {
     return msg.member.roles.cache.find(r => r.name === role);
 }
 
@@ -132,7 +132,7 @@ function roll(input) {
             d1 = getNumber(6);
             d2 = getNumber(6);
             totalRolled = d1 + d2;
-            return `${getDiceEmoji(d1)} ${getDiceEmoji(d2)}`          
+            return `${getDiceEmoji(d1)} ${getDiceEmoji(d2)}`
         case 'd66':
             d1 = getNumber(6);
             d2 = getNumber(6);
@@ -147,6 +147,9 @@ function roll(input) {
         case 'd3':
             totalRolled = getNumber(3);
             return `${getDiceEmoji(totalRolled)}`;
+        case 'd2':
+            totalRolled = getNumber(2);
+            return `${getDiceEmoji(totalRolled)}`;
         default:
             return 'dice setting not found.'
     }
@@ -156,11 +159,11 @@ function getNumber(max) {
     return 1 + Math.floor(Math.random() * max);
 }
 
-function getDiceEmoji(face){
+function getDiceEmoji(face) {
     return bot.emojis.cache.find(e => e.name === `Dice_${face}`).toString();
 }
 
 app.set('port', (process.env.PORT || 5000));
-app.listen(app.get('port'), () => {{
+app.listen(app.get('port'), () => {
     console.log(`Node Application listening on port ${app.get('port')}`);
-}});
+});
