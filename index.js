@@ -1,6 +1,7 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const express = require('express');
+const https = require('https');
 
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
@@ -19,7 +20,7 @@ bot.on('ready', () => {
     console.info(`Succesfully logged in as ${bot.user.tag}`)
 });
 
-bot.on('message', (message) => {
+bot.on('message', async (message) => {
     if (!message.content.startsWith(prefix)) return;
 
     if (message.content.includes(`${prefix}roll`)) {
@@ -64,7 +65,33 @@ bot.on('message', (message) => {
         delayTurn();
         message.channel.send(`Okay! ${currentTurn}'s turn has been delayed`);
     }
+
+    else if (message.content.includes(`${prefix}enemy`)) {
+        getEnemy(message);
+    }
 });
+
+function getEnemy(message) {
+    let arg = isolateArgument(message.content);
+
+    let url = `${process.env.HOST}${process.env.GET}/${arg}`;
+
+    https.get(url, (res) => {
+        let body = '';
+
+        res.on('data', (chunk) => {
+            body += chunk;
+        });
+
+        res.on('end', () => {
+            let object = JSON.parse(body)[0];
+            if (object != null || object != undefined){
+                message.channel.send(`**${object.name}**\n\nSkill: ${object.skill}\nStamina: ${object.stamina}\nInitiative: ${object.initiative}\nArmour: ${object.armour}\nDamage as: ${object.damage}`);
+            }      
+            else message.channel.send(`Could not find enemy '${arg}'`)  ;
+        });
+    });
+}
 
 function delayTurn() {
     stack.push(currentTurn);
